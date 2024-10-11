@@ -1,11 +1,11 @@
 <script setup>
-import { userRegisterService } from '@/api/user.js'
+import { userRegisterService, userLoginService } from '@/api/user.js'
 import { User, Lock } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const isRegister = ref(true) //登录与注册页轮流显示
 
-// 整个form用于注册提交的数据对象——ref({})响应式对象
+// 整个form用于注册提交的统一收集数据——ref({})响应式对象
 const formModel = ref({
   // 根据接口文档所需的参数变量命名
   username: '',
@@ -41,6 +41,8 @@ const rules = {
 
 // 注册提交前进行form校验
 const form = ref() //拿到form组件
+
+// 发起注册
 const register = async () => {   //绑定注册按钮，触发注册事件
   // form校验成功，发起注册请求；form校验失败，自动提示校验规则rules
   await form.value.validate()
@@ -49,12 +51,33 @@ const register = async () => {   //绑定注册按钮，触发注册事件
   ElMessage.success("注册成功")
   isRegister.value = false //关闭注册页，显示登录页
 }
+// 发起登录(与注册一致，先校验)
+const login = async () => {
+  await form.value.validate()
+  // console.log('准备登录')
+  const res = await userLoginService(formModel.value)
+  console.log("登录成功", res)
+}
+
+
+
+// 注册与登录互相切换时，重置表单内容
+watch(isRegister, () => {
+  formModel.value = {
+    username: '',
+    password: '',
+    repassword: ''
+  }
+})
+
+
 </script>
 
 <template>
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
+      <!-- 注册表单 -->
       <el-form :model="formModel" :rules="rules" ref="form" size="large" autocomplete="off" v-if="isRegister">
         <el-form-item>
           <h1>注册</h1>
@@ -82,15 +105,17 @@ const register = async () => {   //绑定注册按钮，触发注册事件
           </el-link>
         </el-form-item>
       </el-form>
-      <el-form ref="form" size="large" autocomplete="off" v-else>
+      <!-- 登录表单 -->
+      <el-form :model="formModel" :rules="rules" ref="form" size="large" autocomplete="off" v-else>
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
-        <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
+        <el-form-item prop="username">
+          <el-input v-model="formModel.username" :prefix-icon="User" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-input name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"></el-input>
+        <el-form-item prop="password">
+          <el-input v-model="formModel.password" name="password" :prefix-icon="Lock" type="password"
+            placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item class="flex">
           <div class="flex">
@@ -99,7 +124,7 @@ const register = async () => {   //绑定注册按钮，触发注册事件
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space>登录</el-button>
+          <el-button @click="login" class="button" type="primary" auto-insert-space>登录</el-button>
         </el-form-item>
         <el-form-item class="flex">
           <el-link type="info" :underline="false" @click="isRegister = true">

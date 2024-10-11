@@ -1,6 +1,6 @@
 // 引入anios
 import axios from 'axios'
-import useUserStore from '@/stores/index'
+import { useUserStore } from '@/stores/index.js'
 // 使用elementPlus组件库，文件是 .vue 文件 不需要导包，全局自动导了；但是js文件必须导包；
 import { ElMessage } from 'element-plus'
 
@@ -39,17 +39,17 @@ instance.interceptors.response.use((res) => {
     return res;
   }
   // 3-2如果业务处理失败，则给出错误弹窗，抛出错误res-后台提供的"身份认证失败！"
-  ElMessage.error('res.data.message' || '服务器异常')
+  ElMessage.error(res.data.message || '服务器异常')
   return Promise.reject(res.data);
 
 }, (error) => {
   //✅请求失败是返回的是respose
   // 3-3处理401错误，401是权限不足或token不存在，或者过期，直接跳转主页
-  if (err.response?.status === 401) {
+  if (error.response?.status === 401) {
     router.push('/login')
   }
   // 3-4处理默认错误，只用给提示
-  ElMessage.error('res.response.data.message' || '服务器异常')
+  ElMessage.error(error.response.data.message || '服务器异常')
   return Promise.reject(error);
 });
 

@@ -14,7 +14,6 @@ export default pinia
 //导出的是一个变量或方法，实例
 
 export * from '@/stores/modules/user' //按需导出从user中导入的所有内容
-export * from '@/stores/modules/count'
 
 
 

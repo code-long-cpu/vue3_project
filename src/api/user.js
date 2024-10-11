@@ -10,6 +10,17 @@ export const userRegisterService = ({ username, password, repassword }) => {
       password,
       repassword
     }
+  })
+}
 
+// 登录接口
+export const userLoginService = ({ username, password }) => {
+  request({
+    url: '/api/login',
+    method: 'POST',
+    data: {
+      username,
+      password
+    }
   })
 }
