@@ -2,6 +2,11 @@
 import { userRegisterService, userLoginService } from '@/api/user.js'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
+import { useUserStore } from '@/stores/index.js'
+
+// vue文件需要引入路由并创建路由实例，实现跳转vue文件的跳转传惨等
+import { useRouter } from 'vue-router'
+
 
 const isRegister = ref(true) //登录与注册页轮流显示
 
@@ -51,12 +56,18 @@ const register = async () => {   //绑定注册按钮，触发注册事件
   ElMessage.success("注册成功")
   isRegister.value = false //关闭注册页，显示登录页
 }
-// 发起登录(与注册一致，先校验)
+
+const userStore = useUserStore() //仓库实例
+const router = useRouter()        //路由实例
 const login = async () => {
+  // 发起登录(与注册一致，先校验)
   await form.value.validate()
   // console.log('准备登录')
   const res = await userLoginService(formModel.value)
-  console.log("登录成功", res)
+  userStore.setToken(res.data.token)
+  router.push('/')
+  // console.log("登录成功")
+  // console.log(res)
 }
 
 
