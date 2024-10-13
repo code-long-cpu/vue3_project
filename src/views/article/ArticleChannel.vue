@@ -3,40 +3,48 @@ import { ref } from 'vue'
 import { getArticleServive } from '@/api/article.js'
 import { Edit, Delete } from '@element-plus/icons-vue'
 
+import ChannelEdit from '@/views/article/components/ChannelEdit.vue'
+
 const title = ref('文章分类')
 const articles = ref([])
 
 const loading = ref(false)
+
 // console.log(title.value)
 const getArticle = async () => {
   loading.value = true
   const res = await getArticleServive()
   articles.value = res.data.data
-  articles.value = []
+  // articles.value = []
   loading.value = false
 
-  console.log(articles.value)   //✅异步结果最后执行：有值
+  // console.log(articles.value)   //✅异步结果最后执行：有值
 }
 getArticle()
 // console.log(articles.value)  //❌同步结果先执行：无值
 
+// 控制弹层显示
+const dailog = ref(null)
 
-const Editchannel = (row, $index) => {
-  console.log(row, $index)
+// 编辑分类
+const Editchannel = (row) => {
+  // console.log(row, $index)
+  dailog.value.open({ row })
 }
 
 const Deletchannel = (row, $index) => {
   console.log(row, $index)
 }
-
-
-
+// 添加分类
+const dialogOn = () => {
+  dailog.value.open({})
+}
 </script>
 
 <template>
   <page-container :title="title">
     <template #extra>
-      <el-button type="primary">添加分类</el-button>
+      <el-button type="primary" @click="dialogOn">添加分类</el-button>
     </template>
 
     <el-table :data="articles" stripe style="width: 100%" highlight-current-row v-loading="loading">
@@ -49,12 +57,13 @@ const Deletchannel = (row, $index) => {
           <el-button @click="Deletchannel(row, $index)" type="danger" :icon="Delete" circle plain></el-button>
         </template>
       </el-table-column>
+      <!-- 无内容显示 -->
       <template #empty>
         <el-empty description="没有数据" />
       </template>
-
     </el-table>
-
+    <!-- 编辑对话框 组件-->
+    <ChannelEdit ref="dailog"></ChannelEdit>
   </page-container>
 </template>
 
