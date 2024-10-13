@@ -1,7 +1,18 @@
 <script setup>
 import { ref } from 'vue'
+import { getArticleService } from '@/api/article'
+
 
 const title = ref('文章分类')
+const articles = ref([])
+// console.log(title.value)
+const getArticle = async () => {
+  const res = await getArticleService()
+  articles.value = res.data
+}
+getArticle()
+
+console.log(articles.value)
 </script>
 
 <template>
