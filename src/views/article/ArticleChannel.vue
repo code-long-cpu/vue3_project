@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getArticleServive } from '@/api/article.js'
+import { getArticleServive, deleteArticleService } from '@/api/article.js'
 import { Edit, Delete } from '@element-plus/icons-vue'
 
 import ChannelEdit from '@/views/article/components/ChannelEdit.vue'
@@ -11,6 +11,7 @@ const articles = ref([])
 const loading = ref(false)
 
 // console.log(title.value)
+// 获取文章列表并渲染
 const getArticle = async () => {
   loading.value = true
   const res = await getArticleServive()
@@ -23,21 +24,40 @@ const getArticle = async () => {
 getArticle()
 // console.log(articles.value)  //❌同步结果先执行：无值
 
-// 控制弹层显示
+// 绑定channelEdite组件，dailog控制组件
 const dailog = ref(null)
 
-// 编辑分类
+// 一、1️⃣channelEdite组件操作(有传值）
+// 编辑分类（传本行的值给组件channelEdite）
 const Editchannel = (row) => {
   // console.log(row, $index)
-  dailog.value.open({ row })
+  dailog.value.open(row)
 }
+//删除改行数据
+const Deletchannel = async (row) => {
+  // await获取promise成功状态的结果值，然后再执行下一步，否则就中断程序
+  await ElMessageBox.confirm(
+    '你确定要删除吗？',
+    '温馨提示',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+  await deleteArticleService(row.id)
+  ElMessage.success('删除成功')
+  getArticle()
 
-const Deletchannel = (row, $index) => {
-  console.log(row, $index)
 }
-// 添加分类
+// 二、2️⃣父勤添加分类操作(无传值)
+// 添加分类（传空对象给组件channelEdite）
 const dialogOn = () => {
   dailog.value.open({})
+}
+// 接收子组件的方法：重新获取文章列表
+const OnSuccess = () => {
+  getArticle()
 }
 </script>
 
@@ -52,6 +72,7 @@ const dialogOn = () => {
       <el-table-column prop="cate_name" label="分类名称"></el-table-column>
       <el-table-column prop="cate_alias" label="分类别名"></el-table-column>
       <el-table-column prop="address" label="操作" width="150">
+        <!-- 编辑和删除按钮 作用域插槽传值给组件slot-->
         <template #default="{ row, $index }">
           <el-button @click="Editchannel(row, $index)" type="primary" :icon="Edit" circle plain></el-button>
           <el-button @click="Deletchannel(row, $index)" type="danger" :icon="Delete" circle plain></el-button>
@@ -62,8 +83,8 @@ const dialogOn = () => {
         <el-empty description="没有数据" />
       </template>
     </el-table>
-    <!-- 编辑对话框 组件-->
-    <ChannelEdit ref="dailog"></ChannelEdit>
+    <!-- 编辑对话框 自定义组件-->
+    <ChannelEdit ref="dailog" @success="OnSuccess"></ChannelEdit>
   </page-container>
 </template>
 
