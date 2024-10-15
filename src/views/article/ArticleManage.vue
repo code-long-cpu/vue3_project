@@ -1,6 +1,8 @@
 <script setup>
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
+import ChannelSelect from '@/views/article/components/ChannelSelect.vue'
+
 const articleList = ref([
   {
     Id: 5961,
@@ -25,6 +27,9 @@ const onEditArticle = (row) => {
 const onDeletArticle = (row) => {
   console.log(row)
 }
+
+const cateId = ref(38444)
+
 </script>
 <template>
   <page-container title="文章管理">
@@ -35,10 +40,9 @@ const onDeletArticle = (row) => {
     <!-- 表单区域：文章搜索栏 -->
     <el-form inline>
       <el-form-item label="文章分类：">
-        <el-select style="width: 240px">
-          <el-option label="新闻" value="110"></el-option>
-          <el-option label="体育" value="137"></el-option>
-        </el-select>
+        <!-- vue2中，表单的v-model 是 :value和@input的简写 -->
+        <!-- vue3中，表单的v-model 是 :modelValue和@update:modelValue的简写 -->
+        <ChannelSelect v-model="cateId"></ChannelSelect>
       </el-form-item>
       <el-form-item label="发布状态：">
         <el-select style="width: 240px">
