@@ -3,7 +3,7 @@ import { Edit, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import ChannelSelect from '@/views/article/components/ChannelSelect.vue'
 import { formatTime } from '@/utils/format.js'
-import { artListGetService } from '@/api/article'
+import { artListGetService, deletArticleService } from '@/api/article'
 // 导入组件不需要大括号
 import ArticleEdit from '@/views/article/components/ArticleEdit.vue'
 
@@ -38,15 +38,46 @@ const onEditArticle = (row) => {
 
 }
 // ③删除文章逻辑
-const onDeletArticle = (row) => {
-  console.log(row)
+const onDeletArticle = async (row) => {
+  // // console.log(row)
+  // const res = await deletArticleService(row.id)
+  // // console.log(res)
+  // ElMessage.success('删除成功')
+  // // 重新获取文章列表
+  // getArtList()
+
+  // 消息弹窗提示是否删除文件
+  ElMessageBox.confirm(
+    '你确定删除文章吗?',
+    '温馨提示',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '成功删除',
+      })
+      deletArticleService(row.id)
+      getArtList()
+
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消删除',
+      })
+    })
 }
 
 // 数据请求条件params，之后的增删改查都是改这个条件，再重新发起数据请求
 // const cateId = ref(38444)
 const params = ref({
   pagenum: 1,
-  pagesize: 3,
+  pagesize: 10,
   cate_id: '',
   state: '',
 })

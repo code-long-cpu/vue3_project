@@ -59,3 +59,20 @@ export const editArticleService = (id) => {
     params: { id }
   })
 }
+// 编辑文章-提交文章
+export const arteditServict = (data) => {
+  return request({
+    url: '/my/article/info',
+    method: 'PUT',
+    data
+  })
+}
+
+// 编辑文章-删除文章
+export const deletArticleService = (id) => {
+  return request({
+    url: '/my/article/info',
+    method: 'DELETE',
+    params: { id }
+  })
+}

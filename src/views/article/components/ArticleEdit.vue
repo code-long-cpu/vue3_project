@@ -4,8 +4,9 @@ import ChannelSelect from './ChannelSelect.vue'
 import { Plus } from '@element-plus/icons-vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { artPublishService, editArticleService } from '@/api/article'
+import { artPublishService, editArticleService, arteditServict } from '@/api/article'
 import { baseURL } from '@/utils/request'
+import axios from 'axios'
 
 // ①抽屉表单内容编辑,提交请求使用
 //默认数据
@@ -35,15 +36,21 @@ const open = async (row) => {
   //①打开抽屉
   visibleDrawer.value = true
   // ②回显数据
-  // 2-1如果有id，说明是编辑旧文章
+  // 2-1如果有id，说明是编辑旧文章 id是一整行的id
   if (row.id) {
     // 需要基于row.id发送请求，获取响应的旧文章的详情数据
     const res = await editArticleService(row.id)
     console.log(res.data)
     // 回显数据，把获取到的数据给fromModel；数据是双向绑定的v-model给<el-form>的，直接渲染
     formModel.value = res.data.data
+    // console.log(formModel.value) 这里有formModel.value.id表示是编辑文章
+
     // 图片需要单独处理,附加上基地址
     imgUrl.value = baseURL + formModel.value.cover_img
+
+    // 注意：提交给后台的图片需要是file对象格式
+    // 需要将图片地址转为file对象，存起来
+    formModel.value.cover_img = await imageUrlToFile(imgUrl.value, formModel.value.cover_img)
 
   } else {
     // 2-2无id，说明是添加新文章，使用默认空数据，
@@ -61,7 +68,7 @@ defineExpose({
 })
 
 const emit = defineEmits(['success'])
-// 发布文章
+// 发布新文章
 const onPublish = async (state) => {
   // 把‘已发布’或‘草稿’存入formModel
   formModel.value.state = state
@@ -72,10 +79,15 @@ const onPublish = async (state) => {
     fd.append(key, formModel.value[key])
   }
 
-  // 发请求
-  if (formModel.value.id) {
+  // 发编辑或添加请求
+  if (formModel.value.id) { //这里46行控制抽屉显示地方row传来的给formModel.value.id表示是编辑文章
     // 编辑操作请求  
-    console.log('编辑操作')
+    await arteditServict(fd)
+    ElMessage.success('编辑成功')
+    visibleDrawer.value = false
+    // 通知父组件，添加成功
+    emit('success', 'edit')
+    // console.log('编辑操作')
   } else {
     // 添加操作请求
     await artPublishService(fd)
@@ -83,6 +95,26 @@ const onPublish = async (state) => {
     visibleDrawer.value = false
     // 通知父组件，添加成功
     emit('success', 'add')
+  }
+}
+
+// 将网络图片地址转换为File对象
+async function imageUrlToFile(imgUrl, fileName) {
+  try {
+    // 第一步：使用axios获取网络图片数据
+    const response = await axios.get(imgUrl, { responseType: 'arraybuffer' });
+    const imageData = response.data;
+
+    // 第二步：将图片数据转换为Blob对象
+    const blob = new Blob([imageData], { type: response.headers['content-type'] });
+
+    // 第三步：创建一个新的File对象
+    const file = new File([blob], fileName, { type: blob.type });
+
+    return file;
+  } catch (error) {
+    console.error('将图片转换为File对象时发生错误:', error);
+    throw error;
   }
 }
 
