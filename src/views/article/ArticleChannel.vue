@@ -67,23 +67,25 @@ const OnSuccess = () => {
       <el-button type="primary" @click="dialogOn">添加分类</el-button>
     </template>
 
+    <!-- 渲染文章列表 -->
     <el-table :data="articles" stripe style="width: 100%" highlight-current-row v-loading="loading">
+      <!-- 文章列表 -->
       <el-table-column type="index" prop="id" label="序号" width="100"></el-table-column>
       <el-table-column prop="cate_name" label="分类名称"></el-table-column>
       <el-table-column prop="cate_alias" label="分类别名"></el-table-column>
       <el-table-column prop="address" label="操作" width="150">
-        <!-- 编辑和删除按钮 作用域插槽传值给组件slot-->
+        <!-- 编辑和删除按钮 作用域slot插槽传值回来给父组件-->
         <template #default="{ row, $index }">
           <el-button @click="Editchannel(row, $index)" type="primary" :icon="Edit" circle plain></el-button>
           <el-button @click="Deletchannel(row, $index)" type="danger" :icon="Delete" circle plain></el-button>
         </template>
       </el-table-column>
-      <!-- 无内容显示 -->
+      <!-- 无内容显示时候就显示一张图片 -->
       <template #empty>
         <el-empty description="没有数据" />
       </template>
     </el-table>
-    <!-- 编辑对话框 自定义组件-->
+    <!-- 编辑文章分类的选择option选择框 自定义组件-->
     <ChannelEdit ref="dailog" @success="OnSuccess"></ChannelEdit>
   </page-container>
 </template>

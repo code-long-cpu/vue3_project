@@ -39,5 +39,23 @@ export const artListGetService = (params) => {
     method: 'GET',
     params,
   })
+}
 
+// 添加和编辑
+// 发布文章   data是formData格式的对象（携带文件图片的格式对象）
+export const artPublishService = (data) => {
+  return request({
+    url: '/my/article/add',
+    method: 'POST',
+    data,
+  })
+}
+
+// 编辑文章-获取文章详情
+export const editArticleService = (id) => {
+  return request({
+    url: '/my/article/info',
+    method: 'GET',
+    params: { id }
+  })
 }
