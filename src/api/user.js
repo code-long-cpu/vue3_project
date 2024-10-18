@@ -37,3 +37,31 @@ export const userGetInfoService = () => {
     // token参数直接在config中配置了
   })
 }
+
+// 更新用户的基本信息
+export const userSetInforService = ({
+  id,
+  nickname,
+  email
+}) => {
+  return request({
+    url: '/my/userinfo',
+    method: 'PUT',
+    data: {
+      id,
+      nickname,
+      email
+    }
+  })
+}
+
+// 更新用户头像
+export const setUserAvatarService = (avatar) => {
+  return request({
+    url: '/my/update/avatar',
+    method: 'PATCH',
+    data: {
+      avatar
+    }
+  })
+}

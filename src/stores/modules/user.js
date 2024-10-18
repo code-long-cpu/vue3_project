@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
 import { userGetInfoService } from '@/api/user.js'
 
 
@@ -24,6 +23,7 @@ export const useUserStore = defineStore('big-user', () => {
     const res = await userGetInfoService()
     user.value = res.data.data
   }
+
   const setUser = (obj) => {  //也可以用作删除用户数据，直接传空对象即可
     user.value = obj
   }

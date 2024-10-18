@@ -16,6 +16,7 @@ import { useUserStore } from '@/stores/index.js'
 import { useRouter } from 'vue-router'
 // 获取个人基本信息
 const userStore = useUserStore()
+// 一进页面就获取用户信息
 userStore.getUser()
 
 // 折叠页跳转 @command获取的是每个item匹配的command
@@ -41,8 +42,6 @@ const handleCommand = (key) => { //如果不加异步async，没等你是否同�
         message: '取消退出',
       })
     })
-
-
   } else {
     //跳转操作
     router.push(`/user/${key}`)

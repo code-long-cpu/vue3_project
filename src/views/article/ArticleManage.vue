@@ -142,6 +142,20 @@ const onSuccess = (type) => {
   }
 }
 
+const arry = [1,2,3,4,5]
+// 对传入的数组进行冒泡排序
+function sortArr(arry){
+  for(let i = 0; i < arry.length; i++){
+    for(let j = 0; j < arry.length - 1 - i; j++){
+      if(arry[j] > arry[j+1]){
+        let temp = arry[j]
+        arry[j] = arry[j+1]
+        arry[j+1] = temp
+      }
+    }
+  }
+  return arry
+}
 
 </script>
 <template>
