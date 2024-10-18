@@ -65,3 +65,20 @@ export const setUserAvatarService = (avatar) => {
     }
   })
 }
+
+// 修改密码
+export const userSetPwdService = ({
+  old_pwd,
+  new_pwd,
+  re_pwd
+}) => {
+  return request({
+    url: '/my/updatepwd',
+    method: 'PATCH',
+    data: {
+      old_pwd,
+      new_pwd,
+      re_pwd
+    }
+  })
+}

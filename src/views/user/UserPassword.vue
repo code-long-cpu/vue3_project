@@ -1,10 +1,16 @@
 <script setup>
 import { ref } from 'vue'
+import { userSetPwdService } from '@/api/user'
+import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/stores';
+import { useRouter } from 'vue-router'
+
 const pwdForm = ref({
   old_pwd: '',
   new_pwd: '',
   re_pwd: ''
 })
+const formRef = ref()
 
 const checkOldSame = (rule, value, cb) => {
   if (value === pwdForm.value.old_pwd) {
@@ -53,6 +59,27 @@ const rules = {
     { validator: checkNewSame, trigger: 'blur' }
   ]
 }
+const userStore = useUserStore()
+const router = useRouter()
+
+// 提交修改密码请求
+const onSubmit = async () => {
+  await formRef.value.validate()
+  await userSetPwdService(pwdForm.value)
+  ElMessage.success('密码修改成功')
+
+  // 清空store数据
+  userStore.setToken('')
+  userStore.setUser({})
+  // 拦截到登陆页
+  router.push('/login')
+}
+
+// 重制密码，直接清空表单
+const onReset = () => {
+  formRef.value.resetFields()
+}
+
 </script>
 <template>
   <page-container title="重置密码">
