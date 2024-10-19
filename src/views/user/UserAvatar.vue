@@ -27,7 +27,7 @@ const onSelectFile = (uploadFile) => {
 const uploadAvatar = async () => {
   // 头像上传请求成功后
   await setUserAvatarService(imageUrl.value)
-  // 重新获取store里的数据，更新头像，给user，LayoutContainer组件中的user信息就会v-model给到标签
+  // 重新获取store里的数据，更新头像，给user，LayoutContainer组件中的user信息就会v-model给到标签，就会同步更新网页头像，昵称等等
   await userStore.getUser()
   // 弹出消息提示
   ElMessage.success('头像上传成功')
